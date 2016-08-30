@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ehcache xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="ehcache.xsd"
+         updateCheck="false" monitoring="autodetect"
+         dynamicConfig="true">
+         
+    <diskStore path="java.io.tmpdir"/>
+    
+    <!--
+       name:缓存名称。
+       maxEntriesLocalHeap：缓存最大个数。
+       eternal:对象是否永久有效，一但设置了，timeout将不起作用。
+       timeToIdleSeconds：设置对象在失效前的允许闲置时间（单位：秒）。仅当eternal=false对象不是永久有效时使用，可选属性，默认值是0，也就是可闲置时间无穷大。
+       timeToLiveSeconds：设置对象在失效前允许存活时间（单位：秒）。最大时间介于创建时间和失效时间之间。仅当eternal=false对象不是永久有效时使用，默认是0.，也就是对象存活时间无穷大。
+       overflowToDisk：当内存中对象数量达到maxEntriesLocalHeap时，Ehcache将会对象写到磁盘中。
+       diskSpoolBufferSizeMB：磁盘缓冲区的大小。写入磁盘的内容将缓冲在此区域， 使用异步的方式写入磁盘。默认30MB，每一个缓存区使用独立的缓冲区，如果遇到OutOfMemory错误时，
+            可以尝试减小这个值。改进磁盘写入性能时，尝试增加这个值。将日志级别开到Trace，当DiskStore执行磁盘写入时，可以看到对应日志。
+       maxEntriesLocalDisk：硬盘最大缓存个数。
+       diskPersistent：是否缓存虚拟机重启期数据
+       diskExpiryThreadIntervalSeconds：磁盘失效线程运行时间间隔，默认是120秒。
+       memoryStoreEvictionPolicy：当达到maxEntriesLocalHeap限制时，Ehcache将会根据指定的策略去清理内存。默认策略是LRU（最近最少使用）。你可以设置为FIFO（先进先出）或是LFU（较少使用）。
+       clearOnFlush：当flush()方法调用时，MemoryStore是否清空其内容，默认为 true，即清空。
+       maxBytesLocalHeap：定义保存在Java虚拟机堆内存中的缓存项的最大字节数。 定义时格式如下<number>k|K|m|M|g|G，其中k|K代表千字节，m|M代表兆字节，g|G代表吉字节。
+            举例：maxBytesLocalHeap="2g"将使用2G堆内存。  此属性与maxEntriesLocalHeap互斥，指定了此属性，则不能指定maxEntriesLocalHeap。
+            如果设定过CacheManager的maxBytesLocalHeap属性，也不能使用此属性。放入缓存的缓存项将使用net.sf.ehcache.pool.sizeof.SizeOf方法计算其字节数。
+            如果希望在计算字节数时忽略对象树种的某些属性，请参考net.sf.ehcache.pool.sizeof.annotations.IgnoreSizeOf注解。
+       maxBytesLocalDisk：和maxBytesLocalHeap属性类似，不过指定的是存储在 本地磁盘上的缓存项最大可使用的字节数。
+       statistics：是否收集统计信息。如果需要监控缓存使用情况，应该打开这个选项。 默认为关闭（统计会影响性能）。设置statistics="true"开启统计。
+       copyOnRead：当缓存项被读出时，是否返回一份它的拷贝（返回对象是缓存中 对象的拷贝）。默认false。
+       copyOnWrite：当缓存项被写入时，是否写入一份它的拷贝（写入缓存的是写入 对象的拷贝）。默认false。
+
+       通过使用<persistence/>子元素，可以配置缓存区的持久化策略。<persistence/>元素的主要属性如下：
+            strategy：配置缓存区持久化的类型。可选值如下：
+                localRestartable：仅在使用Ehcache企业版时有效。启用RestartStore，拷贝所有的缓存项（包含堆和非堆中的）到磁盘中，
+                    此选项提供了缓存快速重启能力以及对磁盘上缓存的容错能力。
+                localTempSwap：当缓存容量达到上限时，将缓存对象 （包含堆和非堆中的）交换到磁盘中。"localTempSwap" 并不持久化缓存内容。
+                none：不持久化缓存内容。
+                distributed：按照<terracotta>标签配置的持久化方式执行。非分布式部署时，此选项不可用。
+            synchronousWrites：此属性仅在strategy="localRestartable"时有意义。默认false。设置为true，缓存写入方法在缓存项成功写入磁盘前不会返回。
+    -->
+    
+    <defaultCache
+           maxEntriesLocalHeap="1000"
+           eternal="false"
+           overflowToDisk="true"
+           timeToIdleSeconds="20"
+           timeToLiveSeconds="60">
+    </defaultCache>
+
+    <!--
+    Sample cache named sampleCache1
+    This cache contains a maximum in memory of 10000 elements, and will expire
+    an element if it is idle for more than 5 minutes and lives for more than
+    10 minutes.
+
+    If there are more than 10000 elements it will overflow to the
+    disk cache, which in this configuration will go to wherever java.io.tmp is
+    defined on your system. On a standard Linux system this will be /tmp"
+    -->
+    <cache name="dataCache"
+           maxBytesLocalHeap="512M"
+           eternal="false"
+           timeToIdleSeconds="300"
+           timeToLiveSeconds="300"
+           overflowToDisk="true"
+           diskSpoolBufferSizeMB="2048"
+           maxEntriesLocalDisk="100000"
+           diskPersistent="false"
+           diskExpiryThreadIntervalSeconds="120"
+           memoryStoreEvictionPolicy="LFU"
+    />
+    <!--
+    Sample cache named sampleCache2
+    This cache has a maximum of 1000 elements in memory. There is no overflow to disk, so 1000
+    is also the maximum cache size. Note that when a cache is eternal, timeToLive and
+    timeToIdle are not used and do not need to be specified.
+    -->
+    <!--
+    <cache name="sampleCache2"
+           maxEntriesLocalHeap="1000"
+           eternal="true"
+           overflowToDisk="false"
+           memoryStoreEvictionPolicy="FIFO"
+            />
+	 -->
+    <!--
+    Sample cache named sampleCache3. This cache overflows to disk. The disk store is
+    persistent between cache and VM restarts. The disk expiry thread interval is set to 10
+    minutes, overriding the default of 2 minutes.
+    -->
+    <!--
+    <cache name="sampleCache3"
+           maxEntriesLocalHeap="500"
+           eternal="false"
+           overflowToDisk="true"
+           timeToIdleSeconds="300"
+           timeToLiveSeconds="600"
+           diskPersistent="true"
+           diskExpiryThreadIntervalSeconds="1"
+           memoryStoreEvictionPolicy="LFU"
+            />
+    -->
+</ehcache>

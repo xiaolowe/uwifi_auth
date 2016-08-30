@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+
+<head>
+   <base href="${CPATH}/">
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>UWiFi</title>
+	<link rel="stylesheet" href="/uwifi_auth/resources/css/style.css">
+	<script src="/uwifi_auth/resources/scripts/jquery.js"></script>
+	<script src="/uwifi_auth/resources/scripts/yxMobileSlider.js"></script>
+</head>
+
+<body>
+
+<div class="all">
+	<div class="weixin_top_nav">
+		<a href="javascript:history.go(-1)"><</a>
+		<label>员工账号上网</label>
+	</div>
+	<div>
+		<div id="slider">
+			<ul>
+				<#if pageInfoLst??>
+				 <#list pageInfoLst as x>
+				  <li>
+					<#if x.outerurl??>
+						<a title="${x.title!''}" href="${x.outerurl!''}">
+							<img src="${fileProxyDomain}${x.mediaurl!''}" alt="${x.title!''}">
+					   </a>
+					<#else> 
+					<img src="${fileProxyDomain}${x.mediaurl!''}"
+						alt="${x.title!''}">
+				    </#if>
+				    </li>
+					</#list> 
+				</#if>
+			</ul>
+		</div>
+		<form id="login_form" data-ajax="false"
+				action="/uwifi_auth/wifidog/loginValidate?yuangong=true" method="get">
+		<div class="content">
+			<div class="login_content_text">
+				<div class="error">
+							<p id="error" style="color: red"></p>
+						</div>
+			
+				<label class="yuangong_input_title">密码</label><input type="text" id="employeepwd" name="employeepwd" class="yuangong_input"></br>
+				<a id="start_btn" href="">登陆</a>
+			</div>
+			<div class="yuangong_content_check">
+				<input type="checkbox" value="check" id="agree" checked="checked" name="agree"><label for="agreement">我已阅读并同意<a href="#">《免责申明条款》</a></label>
+			</div>
+		</div>
+		</form>
+		<div class="foot">
+			<p>Wifi技术服务由合肥城市云数据中心提供</br>服务热线 0551-65842902</p>
+		</div> 
+	</div>
+</div>	
+<script type="text/javascript" src="/uwifi_auth/resources/scripts/yxMobileSlider.js"></script>
+ <script type="text/javascript">
+ 
+    $("#slider").yxMobileSlider({width:450,height:400,during:3000})
+    
+    //按钮倒计时10秒
+   	var count = 5;
+   	var myCountDown;
+    $("#start_btn").click(function(event){
+    	var s = $('#employeepwd').val();
+    	event.preventDefault();
+		if($('#start_btn').hasClass('intime_btn')){
+			return false;
+		}
+		myCountDown = setInterval(countDown,1000);
+	    $.post('/uwifi_auth/wifidog/loginEmployee', {
+	    	busId: ${busId},
+	    	employeepwd: $('#employeepwd').val()
+	    	
+	   	},function(result) {
+		   		if(result == "1") {
+		   			$("form").submit();
+		   		} else {
+		   			$("#error").html("输入的密码有误!");
+					return false;
+		   		}
+		 });
+		});
+    
+    	function countDown(){
+    	   $("#start_btn").addClass("intime_btn");
+    	   $("#start_btn").html("请稍等 "+ count +" 秒！");
+    	   count--;
+    	   if(count==0){
+    	       $("#start_btn").html("登陆");
+    	       $("#start_btn").bind('click');
+    	       $("#start_btn").removeClass("intime_btn");
+    	       clearInterval(myCountDown);
+    	       
+    	       count = 5;
+    	    }
+    	}
+    
+  </script>
+</body>
+</html>

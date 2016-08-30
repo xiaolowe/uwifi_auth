@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<base href="${CPATH}/">
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" >
+	<title>用户认证</title>
+	<link rel="stylesheet" href="resources/css/zepto.slider-min.css">
+	<link rel="stylesheet" href="resources/css/login.css">
+	
+</head>
+
+<body>
+	<header id="head">
+		<div id="logo">
+			<img src="resources/images/logo.png" />
+		</div>
+	</header>	
+	<center id="main">
+		<form id="login_form" data-ajax="false"  action="wifidog/loginValidate" method="post">
+			<div id="main_img">
+				<div class="slider js-slider">
+					<ul class="pic js-slider-img-wrap">
+						<li><a title="pic1" href="#"><img src="resources/images/a1.jpg" alt=""></a></li>
+						<li><a title="pic2" href="#"><img src="resources/images/a2.jpg" alt=""></a></li>
+					</ul>
+					<ul class="num js-slider-num-wrap">
+						<li class="cur">1</li>
+						<li class="">2</li>
+					</ul>
+				</div><!-- .slider -->
+			</div>
+			
+			<p id="relief">
+				<input type="checkbox" id="agree" name="agree" value="1" checked="checked"/>
+				<label for="agree">我已阅读并同意</label><a href="wifidog/showClaim" target="_blank">《免责声明条款》</a>
+			</p>
+			<button id="start" type="submit" class="btn">
+				开始上网
+			</button>
+			<p id="copyright" class="center">
+				WiFi技术服务由 合肥城市云数据中心 提供<br />免费咨询热线：<a class="tel" href="tel:400-044-1226">0551-65842902</a>
+			</p>
+		</form>
+	</center>
+  
+</body>
+<script src="resources/scripts/zepto.min.js"></script>
+<script src="resources/scripts/touch.js"></script>
+<script src="resources/scripts/zepto.slider-min.js"></script>
+<script type="text/javascript">
+   	$(".js-slider").slider({direction: "left",circle:true});
+   	$.post('wifidog/addWifidogLog', {
+   		actionType:'loginPage',
+   		acid: '${param.gw_id}',
+   		mac: '${param.mac!''}',
+   		token: '${param.token}',
+   		url: '${param.url}',
+   		busId: '${busId}'
+   	});
+</script>
+</html>

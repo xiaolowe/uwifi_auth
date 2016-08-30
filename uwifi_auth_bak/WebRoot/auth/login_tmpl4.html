@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+
+<head>
+<base href="${CPATH}/">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>用户认证</title>
+<link rel="stylesheet" href="resources/css/style.css?vs=2.1.3">
+<script src="resources/scripts/jquery.js"></script>
+<script src="resources/scripts/yxMobileSlider.js"></script>
+</head>
+
+<body>
+
+	<div class="all">
+		<div class="top_nav">
+			<div class="top_left">
+				<img id="logo1" src="resources/images/logo.png" />
+			</div>
+			<div class="top_right">
+				<label>${businessName}</label>
+			</div>
+		</div>
+		<div>
+			<div id="slider">
+				<ul>
+					<#if pageInfoLst??> <#list pageInfoLst as x>
+					<li><#if x.outerurl??> <a title="${x.title!''}"
+						href="${x.outerurl!''}"
+						onclick="addAdLog(this.href,${x.id}, ${x.sort});return false;">
+							<img src="${fileProxyDomain}${x.mediaurl!''}" alt="${x.title!''}">
+					</a> <#else> <img src="${fileProxyDomain}${x.mediaurl!''}"
+						alt="${x.title!''}"> </#if>
+					</li> </#list> </#if>
+				</ul>
+			</div>
+			<form id="login_form" data-ajax="false"
+				action="wifidog/loginValidate" method="get">
+				<div class="content">
+						<div id="leftarow">
+							<#if authtype == 3>
+<!-- 							<a href="" id="back" title="返回短信认证">＜</a> -->
+							</#if>
+							<input type="checkbox" value="check" id="agree" checked="checked" name="agree"><label
+								class="checkbox_text" for="agree">我已阅读并同意<a
+								href="wifidog/showClaim" target="_blank">《免责申明条款》</a></label></br>
+						</div>
+					<#if authtype == 0>
+					<div class="login_content_text">
+						<a href="" id="start_btn">开始上网</a>
+					</div>
+					<#elseif authtype == 1 >
+					<div class="note_content_text">
+						<div class="error">
+							<p id="error"></p>
+						</div>
+
+						<div>
+							<label>手机号</label> <input type="text" id="phone" name="phoneNO"> <a
+								href="" class="note_btn1" id="get_code">获取验证码</a>
+						</div>
+						<div>
+							<label>验证码</label> <input type="text" id="code" name="code"> <a
+								href="" class="note_btn2" id="start_btn">开始上网</a>
+						</div>
+					</div>
+					<#elseif authtype == 2>
+					<div class="content_text">
+						<label>请关注微信公众号“<label class="color_label">${weixinNO}</label>”
+						</label></br> <label class="label_small">畅享免费网络&nbsp;<a
+							href="wifidog/showWxHelp/${busId}">上网帮助</a></label>
+					</div>
+					</#if>
+
+				</div>
+				<#if authtype == 3>
+				<div class="more_surf">
+					<label class="more_surf_title">上网方式:</label>
+					<a href="wifidog/showWeixinPage"  id="start_weixin_btn">
+						<span class="surf1">
+							<img src="resources/images/weixin.png" class="surf1_img"></br>
+							<label>微信</label>
+						</span>
+					</a>
+					<a href="wifidog/loginEmployee?busId=${busId}" id="start_yuangong_btn">
+						<span class="surf2">
+							<img src="resources/images/yuangong.png" class="surf2_img"></br>
+							<label>员工账号</label>
+						</span>
+					</a>
+				</div>
+				</#if>
+			</form>
+			<div class="foot">
+				<p>
+					WiFi技术服务由 合肥城市云数据中心 提供<br />免费咨询热线：<a class="tel"
+						href="tel:400-044-1226">0551-65842902</a>
+				</p>
+			</div>
+		</div>
+	</div>
+	<script type="text/javascript"
+		src="resources/scripts/yxMobileSlider.js"></script>
+	<script>
+    $("#slider").yxMobileSlider({width:450,height:420,during:3000});
+    
+    var times_btn=59;
+    
+  	//按钮倒计时10秒
+   	var count = 10;
+   	var myCountDown;
+    $(document).ready(function(){
+    	<#if authtype == 1 || authtype == 3>
+    	$("#get_code").click(function(event){
+    		var regPartton=/1[3-8]+\d{9}/;
+    		
+			//if($("#phone").val().length==11 && $.isNumeric($('#phone').val())){
+			if(regPartton.test($("#phone").val())) {
+				event.preventDefault();
+				if(!$('#get_code').hasClass('intime_btn')){
+					$("#get_code").addClass("intime_btn");
+					$("#error").html("");
+					timeces=setInterval(changeText,'1000');
+					
+					// 发送短信验证码
+				    $.post('wifidog/sendSmsCode', {
+				    	phoneNO: $('#phone').val(),
+				   		acId: '${param.gw_id}',
+				   		busId: '${busId!''}',
+				   	},function() {
+					}
+					);
+				}else{
+					return false;
+				}
+			}else{
+				$("#error").html("请输入正确的手机号！");
+				return false;
+			}
+		});
+		function changeText(){
+			$("#get_code").html(times_btn+"秒后重试");
+			times_btn=times_btn-1;
+			if(times_btn=='-1'){
+				times_btn='59';
+				$("#get_code").html('获取验证码');
+				$("#get_code").bind('click');
+				$("#get_code").removeClass("intime_btn");
+				clearInterval(timeces);
+			}
+		}
+		</#if>
+		
+		<#if authtype == 3>
+		$("#back").hide();
+// 		$(".note_content_text").hide();
+		
+		$("#other_way").click(function(event){
+			event.preventDefault();
+			$(".content_text").hide();
+			$("#back").show();
+			$(".note_content_text").show();
+			
+		});
+		
+		$("#back").click(function(event){
+			event.preventDefault();
+			$("#back").hide();
+			$(".note_content_text").hide();
+			$(".content_text").show();
+		});
+		
+		</#if>
+	
+		$("#start_btn").click(function(event){
+			event.preventDefault();
+			if($('#start_btn').hasClass('intime_btn')){
+				return false;
+			}
+			myCountDown = setInterval(countDown,1000);
+			<#if authtype == 0 >
+			$("form").submit();
+			</#if>
+			
+			<#if authtype == 1 || authtype == 3>
+			var regPartton=/1[3-8]+\d{9}/;
+			if(!regPartton.test($("#phone").val())){
+				$("#error").html("请输入正确的手机号！");
+				return false;
+				
+			} else if($("#code").val().length!=6 || !$.isNumeric($('#code').val())){
+				$("#error").html("请输入正确的验证码！");
+				return false;
+			} else {
+				
+				// 发送短信验证码
+			    $.get('wifidog/checkSmsCode', {
+			    	phoneNO: $('#phone').val(),
+			    	busId: '${busId}',
+			   		captcha: $('#code').val(),
+			   	},function(result) {
+			   		if(result == "1") {
+			   			$("form").submit();
+			   		} else {
+			   			$("#error").html("验证码无效，请重新获取验证码!");
+						return false;
+			   		}
+				},
+				"text"
+				);
+				return false;
+				
+			}
+			</#if>
+		});
+	});
+    
+    $.post('wifidog/addWifidogLog', {
+   		actionType:'loginPage',
+   		acid: '${param.gw_id}',
+   		mac: '${param.mac!''}',
+   		token: '${param.token}',
+   		url: '${param.url}',
+   		busId: '${busId}'
+   	},function() {
+		}
+	);
+    
+    function countDown(){
+   	   $("#start_btn").addClass("intime_btn");
+   	   $("#start_btn").html("请稍等 "+ count +" 秒！");
+   	   count--;
+   	   if(count==0){
+   	       $("#start_btn").html("开始上网");
+   	       $("#start_btn").bind('click');
+   	       $("#start_btn").removeClass("intime_btn");
+   	       clearInterval(myCountDown);
+   	       
+   	       count = 10;
+   	    }
+   	}
+    
+	function addAdLog(href, id, sort){
+		
+		$.post('wifidog/addAdLog', {
+			acId: '${param.gw_id}',
+	   		mac: '${param.mac!''}',
+	   		templetId: '${templetId}',
+	   		adId: id,
+	   		url: href,
+	   		sort: sort,
+	   		busId: '${busId}',
+	   		authType: '${authtype}'
+	   	},
+	   		function() {
+				window.location.href= href;
+	   		}
+		);
+		
+	}
+  </script>
+</body>
+</html>

@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+
+<head>
+	<base href="${CPATH}/">
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>UWiFi</title>
+	<link rel="stylesheet" href="resources/css/style.css">
+	<script src="resources/scripts/jquery.js"></script>
+	<script src="resources/scripts/yxMobileSlider.js"></script>
+</head>
+
+<body>
+
+<div class="all">
+	<div class="weixin_top_nav">
+		<a href="javascript:history.go(-1)"><</a>
+		<label>上网帮助</label>
+	</div>
+	<div class="top_nav">
+		<div class="top_left">
+			<img id="logo1" src="resources/images/logo.png" />
+		</div>
+		<div class="top_right">
+			<label>${businessName!''}</label>
+		</div>
+	</div>
+	<div class="help_center">
+		<label>1.打开微信，手动查找微信帐号</br>&nbsp;&nbsp;&nbsp;“<label class="color_label">${weixinNO!''}</label>”</label>
+		<img src="resources/images/help1.png">
+		<label>2.点击关注后收到商家信息，点击即可实现上网。</label>
+		<img src="resources/images/help2.jpg">
+	</div>
+</div>
+<script type="text/javascript" src="resources/scripts/yxMobileSlider.js"></script>
+  <script>
+    $("#slider").yxMobileSlider({width:450,height:450,during:3000})
+  </script>
+</body>
+</html>

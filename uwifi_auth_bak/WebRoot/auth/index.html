@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>UWiFi</title>
+	<link rel="stylesheet" href="css/style.css">
+	<script src="js/jquery.js"></script>
+	<script src="js/yxMobileSlider.js"></script>
+</head>
+
+<body>
+
+<div class="all">
+	<div class="top_nav">
+		<div class="top_left">
+			<img id="logo1" src="images/logo.png" />
+		</div>
+		<div class="top_right">
+			<label>商家名称</label>
+		</div>
+	</div>
+	<div>
+		<div id="slider">
+			<ul>
+				<li>
+					<img src="images/img1.png">
+				</li>
+				<li>
+					<img src="images/img1.png">
+				</li>
+			</ul>
+		</div>
+		<div class="content">
+			<div class="note_content_text">
+				<div class="error">
+					<p id="error"></p>
+				</div>
+				
+				<div>
+					<label>手机号</label>
+					<input type="text" id="phone" >
+					<a href="#" class="note_btn1" id="get_code">获取验证码</a>
+				</div>
+				<div>
+					<label>验证码</label>
+					<input type="text" id="code" >
+					<a href="#" class="note_btn2" id="atart">开始上网</a>
+				</div>
+			</div>
+		</div>
+		<div class="more_surf">
+			<label class="more_surf_title">更多上网方式</label>
+			<a href="weixin.html">
+				<span class="surf1">
+					<img src="images/weixin.png" class="surf1_img"></br>
+					<label>微信</label>
+				</span>
+			</a>
+			<a href="yuangong.html">
+				<span class="surf2">
+					<img src="images/yuangong.png" class="surf2_img"></br>
+					<label>员工账号</label>
+				</span>
+			</a>
+		</div>
+		<div class="foot">
+			<input type="checkbox" value="check" id="agreement" checked="checked"><label class="checkbox_text" for="agreement">我已阅读并同意<a href="#">《免责申明条款》</a></label></br>
+			<p>Wifi技术服务由合肥城市云数据中心提供</br>服务热线 0551-65842902</p>
+		</div>
+	</div>
+</div>
+<script type="text/javascript" src="js/yxMobileSlider.js"></script>
+  <script>
+    $("#slider").yxMobileSlider({width:450,height:400,during:3000})
+  </script>
+  <script type="text/javascript">
+	var times_btn=59;
+	$(document).ready(function(){
+		$("#get_code").click(function(){
+			if($("#phone").val().length==11&&$.isNumeric($('#phone').val())){
+				if(!$('#get_code').hasClass('intime_btn')){
+					$("#get_code").addClass("intime_btn");
+					$("#error").html("");
+					timeces=setInterval(changeText,'1000');
+				}else{
+					return false;
+				}
+			}else{
+				$("#error").html("请输入正确手机号啊！");
+				return false;
+			}
+		});
+		$("#atart").click(function(){
+			if($("#code").val().length!=6||!$.isNumeric($('#code').val())){
+				$("#error").html("请输入正确验证码");
+				return false;
+			}
+		});
+		function changeText(){
+		$("#get_code").html(times_btn+"后重试");
+		times_btn=times_btn-1;
+		if(times_btn=='-1'){
+			times_btn='59';
+			$("#get_code").html('获取验证码');
+			$("#get_code").bind('click');
+			$("#get_code").removeClass("intime_btn");
+			clearInterval(timeces);
+		}
+	}
+	})
+	
+  </script>
+</body>
+</html>

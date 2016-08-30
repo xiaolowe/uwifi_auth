@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+
+<head>
+    <base href="${CPATH}/">
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>UWiFi</title>
+	<link rel="stylesheet" href="resources/css/style.css">
+	<script src="resources/js/jquery.js"></script>
+	<script src="resources/js/yxMobileSlider.js"></script>
+</head>
+
+<body>
+
+<div class="weixin">
+	<div class="weixin_top_nav">
+		<a href="javascript:history.go(-1)"><</a>
+		<label>微信上网</label>
+	</div>
+	<div class="weixin_content">
+		<div class="weixin_content_box">
+			<label class="weixin_content_box_title">${(multiauthconfig.tiptitle)!''}</label>
+			<#if (multiauthconfig.tipcontent1) ??>
+			<label class="weixin_content_box_txt">${(multiauthconfig.tipcontent1)!''}</label>
+			</#if>
+			<#if (multiauthconfig.tipcontent2) ??>
+			<label class="weixin_content_box_txt">${(multiauthconfig.tipcontent2)!''}</label>
+			</#if>
+			<#if (multiauthconfig.tipcontent3) ??>
+			<label class="weixin_content_box_txt">${(multiauthconfig.tipcontent3)!''}</label>
+			</#if>
+			<#if (multiauthconfig.tipcontent4) ??>
+			<label class="weixin_content_box_txt">${(multiauthconfig.tipcontent4)!''}</label>
+			</#if>
+			<#if (multiauthconfig.tipcontent5) ??>
+			<label class="weixin_content_box_txt">${(multiauthconfig.tipcontent5)!''}</label>
+			</#if>
+			
+		</div>
+		<p class="weixin_content_foot"><a href="wifidog/showWxHelp/${multiauthconfig.businessid}">不会关注？点这里</a></p>
+	</div>
+	<div class="foot">
+		<p>Wifi技术服务由合肥城市云数据中心提供</br>服务热线 0551-65842902</p>
+	</div>
+</div>
+
+</body>
+</html>

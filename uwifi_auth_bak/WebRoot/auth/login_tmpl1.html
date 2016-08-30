@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<base href="${CPATH}/">
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" >
+	<title>用户认证</title>
+	<link rel="stylesheet" href="resources/css/zepto.slider-min.css">
+	<link rel="stylesheet" href="resources/css/login.css">
+	
+</head>
+
+<body>
+	<header id="head">
+		<div id="logo">
+			<img src="resources/images/logo.png" />
+		</div>
+	</header>	
+	<center id="main">
+		<form id="login_form" data-ajax="false"  action="wifidog/loginValidate" method="post">
+			<div id="main_img">
+				<div class="slider js-slider">
+					<ul class="pic js-slider-img-wrap">
+						<#if pageInfoLst??>
+						<#list pageInfoLst as x>
+						<li>
+							<#if x.outerurl??>
+							<a title="${x.title!''}" href="${x.outerurl!''}" onclick="addAdLog(this.href,${x.id}, ${x.sort});return false;" >
+								<img src="${fileProxyDomain}${x.mediaurl!''}" alt="${x.title!''}">
+							</a>
+							<#else>
+								<img src="${fileProxyDomain}${x.mediaurl!''}" alt="${x.title!''}">
+							</#if>
+						</li>
+						</#list>
+						</#if>
+					</ul>
+					<ul class="num js-slider-num-wrap">
+						<#if pageInfoLst??>
+						<#list 0..pageInfoLst.size()-1 as i>
+							<#if i = 0>
+							<li class="cur">${i+1}</li>
+							<#else>
+							<li class="">${i+1}</li>
+							</#if>
+						</#list>
+						</#if>
+					</ul>
+				</div><!-- .slider -->
+			</div>
+
+			<p id="relief">
+				<input type="checkbox" id="agree" name="agree" value="1" checked="checked"/>
+				<label for="agree">我已阅读并同意</label><a href="wifidog/showClaim" target="_blank">《免责声明条款》</a>
+			</p>
+			<button id="start" type="button" class="btn">
+				开始上网
+			</button>
+			<p id="copyright" class="center">
+				WiFi技术服务由 合肥城市云数据中心 提供<br />免费咨询热线：<a class="tel" href="tel:400-044-1226">0551-65842902</a>
+			</p>
+		</form>
+	</center>
+  
+</body>
+<script src="resources/scripts/zepto.min.js"></script>
+<script src="resources/scripts/touch.js"></script>
+<script src="resources/scripts/zepto.slider-min.js"></script>
+<script type="text/javascript">
+	$.post('wifidog/addWifidogLog', {
+   		actionType:'loginPage',
+   		acid: '${param.gw_id}',
+   		mac: '${param.mac!''}',
+   		token: '${param.token}',
+   		url: '${param.url}',
+   		busId: '${busId}'
+   	},function() {
+		}
+	);
+	
+   	$(".js-slider").slider({direction: "left",circle:true});
+   	
+  	//按钮倒计时10秒
+   	var count = 10;
+   	var myCountDown;
+   	$("#start").click(function() {
+   		myCountDown = setInterval(countDown,1000);
+   		$("#login_form").submit();
+   	});
+   	
+   	function countDown(){
+   	   $("#start").attr("disabled",true);
+   	   $("#start").addClass("intime_btn");
+   	   $("#start").val("请稍等 "+ count +" 秒！");
+   	   count--;
+   	   if(count==0){
+   	       $("#start").val("开始上网").removeAttr("disabled");
+   	       $("#start").removeClass("intime_btn");
+   	       clearInterval(myCountDown);
+   	       
+   	       count = 10;
+   	    }
+   	}
+   	
+	function addAdLog(href, id, sort){
+		
+		$.post('wifidog/addAdLog', {
+			acId: '${param.gw_id}',
+	   		mac: '${param.mac!''}',
+	   		templetId: '${templetId}',
+	   		adId: id,
+	   		url: href,
+	   		sort: sort,
+	   		busId: '${busId}'
+	   	},
+	   		function() {
+				window.location.href= href;
+	   		}
+		);
+		
+	}
+</script>
+</html>
